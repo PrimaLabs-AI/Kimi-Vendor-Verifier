@@ -135,8 +135,9 @@ def _get_file_logger() -> logging.Logger:
     logger = logging.getLogger("kimi_retry")
     if not logger.handlers:
         logger.setLevel(logging.INFO)
-        log_dir = Path(__file__).parent / "logs"
-        log_dir.mkdir(exist_ok=True)
+        # KVV_LOG_DIR lets an installed copy log outside site-packages.
+        log_dir = Path(os.environ.get("KVV_LOG_DIR") or Path(__file__).parent / "logs")
+        log_dir.mkdir(parents=True, exist_ok=True)
         handler = logging.FileHandler(log_dir / "kimi_retry.log", encoding="utf-8")
         handler.setFormatter(logging.Formatter("%(asctime)s | %(message)s"))
         logger.addHandler(handler)

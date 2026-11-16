@@ -28,8 +28,31 @@ markers = [
     "flaky: tests that may be retried on failure",
 ]
 
-[tool.setuptools]
-py-modules = ["kimi_model", "aime2025", "mmmu_pro_vision", "ocr_bench", "eval", "load_aime_questions"]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# Installed (e.g. as a git dependency of another project), the whole KVV tree -- scripts,
+# tests/, testdata/, beam/, toolcall_benchmark/ -- lands inside the kimi_vendor_verifier
+# package with its layout unchanged, so the suites run from there exactly as they do from
+# a checkout: `pytest <ROOT>/tests/...`, `python <ROOT>/eval.py ...`.
+# kimi_vendor_verifier.ROOT is that directory (the checkout root in an editable install).
+[tool.hatch.build.targets.wheel]
+packages = ["kimi_vendor_verifier"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"aime2025.py" = "kimi_vendor_verifier/aime2025.py"
+"eval.py" = "kimi_vendor_verifier/eval.py"
+"kimi_model.py" = "kimi_vendor_verifier/kimi_model.py"
+"kimi_toolcall.py" = "kimi_vendor_verifier/kimi_toolcall.py"
+"mmmu_pro_vision.py" = "kimi_vendor_verifier/mmmu_pro_vision.py"
+"ocr_bench.py" = "kimi_vendor_verifier/ocr_bench.py"
+"utils.py" = "kimi_vendor_verifier/utils.py"
+"verify_params.py" = "kimi_vendor_verifier/verify_params.py"
+"tests" = "kimi_vendor_verifier/tests"
+"testdata" = "kimi_vendor_verifier/testdata"
+"beam" = "kimi_vendor_verifier/beam"
+"toolcall_benchmark" = "kimi_vendor_verifier/toolcall_benchmark"
 
 [project.entry-points.inspect_ai]
-kimi_vendor_verifier = "kimi_model"
+kimi_vendor_verifier = "kimi_vendor_verifier._inspect_registry"
